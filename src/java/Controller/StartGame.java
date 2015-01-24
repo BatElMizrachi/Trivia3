@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import Model.*;
+import javax.servlet.RequestDispatcher;
 
 @WebServlet(urlPatterns = {"/StartGame"})
 public class StartGame extends HttpServlet 
@@ -63,8 +64,9 @@ public class StartGame extends HttpServlet
             int numberOfQuestion = (int)session.getAttribute("NumofQuestions");
             int numberOfCorrectAnswers = (int)session.getAttribute("CorrectAnswers");
             int score = numberOfCorrectAnswers * 100 / numberOfQuestion;
+            session.setAttribute("score", score);
             
-            ShowScoreView(response, score, session);
+            ShowScoreView(request,response,score);
         }
         else // calc questions
         {
@@ -148,7 +150,7 @@ public class StartGame extends HttpServlet
     }
     
     private void CheckAnswer(HttpServletRequest request, QuestionBase currentQuestion, HttpServletResponse response)
-            throws NumberFormatException, IOException 
+            throws NumberFormatException, IOException, ServletException 
     {
         boolean isCorrect = false;
         
@@ -185,125 +187,61 @@ public class StartGame extends HttpServlet
             session.setAttribute("CorrectAnswers", correctAnswers+1);
         }
         
-        CheckView(response, index+1 < ((Manager)session.getAttribute("manager")).QuestionSize(), isCorrect);
+        CheckView(request,response, index+1 < ((Manager)session.getAttribute("manager")).QuestionSize(), isCorrect);
         
     }
 
-    private void CheckView(HttpServletResponse response, boolean lastNotQuestion, boolean isCorrect)
-            throws IOException 
+    private void CheckView(HttpServletRequest request,HttpServletResponse response, boolean lastNotQuestion, boolean isCorrect)
+            throws IOException, ServletException 
     {
-        
-        ***********
-        try (PrintWriter out = response.getWriter())
+        String link = "";
+
+        if (isCorrect) 
         {
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet StartGame</title>");  
-            out.println("<link href=\"Style/appliction.css\" rel=\"stylesheet\" type=\"text/css\"/>");
-            out.println("<link href=\"Style/Question.css\" rel=\"stylesheet\" type=\"text/css\"/>");
-            out.println("</head>");
-            out.println("<body>");
-            
-            if(isCorrect)
+            if (lastNotQuestion) 
             {
-                out.println("<form name=\"Success\">");
-                out.println("<nav class=\"headerContain\">");
-                out.println("<h1 class=\"h1-m\">Excellent!! correct answer</h1>");
-                out.println("<span><img src=\"Pic/correct.png\" alt=\"\" class=\"alert_pic\"></span>");
-                out.println("</nav>");
-                out.println("</form>");
-                out.println("<form name=\"Submit\">");
-                
-                out.println("<div id=\"divForEndOrNot\"></div>");
-                if(lastNotQuestion)
-                {
-                    out.println("<br>");
-                    out.println("<input type=\"submit\" name =\"endOrNot\" value=\"Continue\">");
-                }
-                
-                out.println("<br>");
-                
-                out.println("<input type=\"submit\" value=\"End game\" name =\"endOrNot\">");
-                
-                out.println("</form>");
-            }
-            else
+                link = "/CheckViewCorrect.html";
+            } 
+            else 
             {
-                out.println("<form name=\"Failure\">");
-                out.println("<nav class=\"headerContain\">");
-                out.println("<h1 class=\"h1-m\">Wrong answer</h1>");
-                out.println("<span><img src=\"Pic/wrong.jpg\" alt=\"\" class=\"alert_pic\"></span>");
-                out.println("</nav>");
-                out.println("</form>");
-                out.println("<form name=\"Submit\">");
-                
-                out.println("<div id=\"divForEndOrNot\"></div>");
-                if(lastNotQuestion)
-                {
-                    out.println("<br>");
-                    out.println("<input type=\"submit\" value=\"Continue\" name =\"endOrNot\">");
-                }
-                
-                out.println("<br>");
-                
-                out.println("<input type=\"submit\" value=\"End game\" name =\"endOrNot\">");
-                
-                out.println("</form>");
+                link = "/CheckViewCorrectLast.html";
             }
-            
-            out.println("</body>");
-            out.println("</html>");
+        } 
+        else 
+        {
+            if (lastNotQuestion)
+            {
+                link = "/CheckViewNotCorrect.html";
+            } 
+            else 
+            {
+                link = "/CheckViewNotCorrectLast.html";
+            }
         }
+        
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(link);
+        dispatcher.include(request, response);
     }
 
-    private void ShowScoreView(HttpServletResponse response, int score, HttpSession session) 
-            throws IOException 
+    private void ShowScoreView(HttpServletRequest request,HttpServletResponse response, int score) 
+            throws IOException, ServletException 
     {
-        try (PrintWriter out = response.getWriter())
+        String link = "";
+        if(score <= 60)
         {
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet StartGame</title>");
-            out.println("<link href=\"Style/appliction.css\" rel=\"stylesheet\" type=\"text/css\"/>");
-            out.println("<link href=\"Style/Question.css\" rel=\"stylesheet\" type=\"text/css\"/>");
-            out.println("</head>");
-            out.println("<body>");
-            
-            out.println("<h2>hey, " + session.getAttribute("user") +".</h2>");
-            
-            out.println("<h3>You asked by categories</h3>");
-            out.println("<h3>Food: " + session.getAttribute("FoodCount") + "</h3>");
-            out.println("<h3>History: " + session.getAttribute("HistoryCount") + "</h3>");
-            out.println("<h3>Sport: " + session.getAttribute("SportCount") + "</h3>");
-            out.println("<h3>Other: " + session.getAttribute("OtherCount") + "</h3>");
-            
-            if(score <= 60)
-            {
-                out.println("<form name=\"scoreBad\">");
-                out.println("<h1>Your score is: "+ score +"</h1>");
-                out.println("<h1>Maybe next time you will have better luck</h1>");
-                out.println("</form>");
-            }
-            else if (score < 90)
-            {
-                out.println("<form name=\"scoreGood\">");
-                out.println("<h1>Your score is: "+ score +"</h1>");
-                out.println("<h1>There is room to improve, try again</h1>");
-                out.println("</form>");
-            }
-            else
-            {
-                out.println("<form name=\"scoreExcellent\">");
-                out.println("<h1>Your score is: "+ score +"</h1>");
-                out.println("<h1>Excellent! It seems that you are an expert</h1>");
-                out.println("</form>");
-            }
-            
-            out.println("</body>");
-            out.println("</html>");
+            link = "/ShowScoreBad.jsp";
         }
+        else if (score < 90)
+        {
+            link = "/ShowScoreGood.jsp";
+        }
+        else
+        {
+            link = "/ShowScoreExcellent.jsp";
+        }
+        
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(link);
+        dispatcher.include(request, response);
     }
 
     private void AskQuestionForm(final PrintWriter out, HttpSession session) 

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Start Game</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <script>
+            function isValid() {
+                var a = document.getElementById("CategoryFood").checked;
+                var b = document.getElementById("CategorySport").checked;
+                var c = document.getElementById("CategoryHistory").checked;
+                var d = document.getElementById("CategoryOther").checked;
+                
+                if (a == false && b == false && c == false && d == false) {
+                    alert("You have to select at least one category");
+                    return false;
+                }
+            }
+                  </script>
+                  
+        
+        <link href="Style/appliction.css" rel="stylesheet" type="text/css"/>   
+        <link href="Style/Question.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+        <h1> Select categories, and for each category Difficulty </h1>
+        <FORM ACTION="StartGame">
+            <div class="contain">
+                <nav class="headerContain">
+                    <span><input type="checkbox" name="Category" value="Food" id="CategoryFood"/></span>
+                    <span>Food</span>
+                    <span><img class="imgCont" src="Pic/Food.jpg" alt="Food"/></span>
+                </nav>
+                <ol>
+                    <li class="list-level"><input type="radio" name="LevelFood" value="Easy" checked/>Easy </li>
+                    <li class="list-level"><input type="radio" name="LevelFood" value="Medium" />Medium </li>
+                    <li class="list-level"><input type="radio" name="LevelFood" value="Difficult" />Difficult </li>
+                </ol>
+            </div>
+            <div class="contain Sport">
+                <nav class="headerContain">
+                    <span><input type="checkbox" name="Category" value="Sport" id="CategorySport"/></span>
+                    <span>Sport</span>
+                    <span><img class="imgCont" src="Pic/sport.jpg" alt="Sport"/></span>
+                </nav>
+                <ol>
+                    <li class="list-level"><input type="radio" name="LevelSport" value="Easy" checked/>Easy </li>
+                    <li class="list-level"><input type="radio" name="LevelSport" value="Medium" />Medium </li>
+                    <li class="list-level"><input type="radio" name="LevelSport" value="Difficult" />Difficult </li>
+                </ol>
+            </div> 
+            <div class="contain History">
+                <nav class="headerContain">
+                    <span><input type="checkbox" name="Category" value="History" id="CategoryHistory" /></span> 
+                    <span>History</span>
+                    <span><img class="imgCont" src="Pic/History.jpg" alt=""/></span>
+                </nav>
+                <ol>
+                    <li class="list-level"><input type="radio" name="LevelHistory" value="Easy" checked/>Easy</li>
+                    <li class="list-level"><input type="radio" name="LevelHistory" value="Medium" />Medium</li> 
+                    <li class="list-level"><input type="radio" name="LevelHistory" value="Difficult" />Difficult</li> 
+                </ol>
+            </div>
+            <div class="contain Other">
+                <nav class="headerContain">
+                    <span><input type="checkbox" name="Category" id="CategoryOther" value="Other"></span>
+                    <span>Other</span>
+                    <span><img class="imgCont" src="Pic/Other.jpg" alt=""/></span>
+                </nav>
+                <ol>
+                    <li class="list-level"><input type="radio"  name="LevelOther" value="Easy" checked>Easy <br></li>
+                    <li class="list-level"><input type="radio" name="LevelOther" value="Medium" >Medium <br></li>
+                    <li class="list-level"><input type="radio" name="LevelOther" value="Difficult" >Difficult <br></li>
+                </ol>
+            </div> 
+            <input class="btn btn-default play" type="submit" value="Play!" name="Play!" onclick="return isValid();"/>
+        </form>
+    </body>
+</html>

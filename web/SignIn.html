@@ -1,0 +1,28 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Servlet Connect</title> 
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="Style/appliction.css" rel="stylesheet" type="text/css"/>
+        <link href="Style/signin.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+        <div class="container">
+            <form class="form-signin" role="form" action="Connect">
+                Please sign in
+                <input type="text" class="form-control" placeholder="First Name" name="First" required autofocus>
+                <input type="text" class="form-control" placeholder="Last Name" name="Last" required>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="remember-me" value="remember-me"> Remember me
+                    </label>
+                </div>
+                <input type="hidden" name="AfterFill" value="Fill">
+                <button class="btn btn-sign" type="submit">Sign in</button>
+            </form>
+        </div>
+
+    </body>
+</html>

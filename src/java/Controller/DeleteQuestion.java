@@ -120,7 +120,7 @@ public class DeleteQuestion extends HttpServlet {
 
         for (QuestionBase question : allQuestions) 
         {
-            listQuestion+= "<li>" + question.GetQuestion() + "</li>";
+            listQuestion+= "<li>" + question.getQuestion() + "</li>";
             index++;
         }
         

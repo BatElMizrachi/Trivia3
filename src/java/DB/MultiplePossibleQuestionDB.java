@@ -21,19 +21,19 @@ public class MultiplePossibleQuestionDB {
             PreparedStatement pStatement;
             pStatement = connection.prepareStatement("insert into multiple_Possible_Questions (QUESTION, ANSWER, CATEGORY, LEVEL)"
                     + " values (?, ?, ?, ? )");
-            pStatement.setString(1, multiplePossibleQuestion.GetQuestion());
-            pStatement.setInt(2, multiplePossibleQuestion.GetAnswer());
-            pStatement.setString(3, multiplePossibleQuestion.GetCategory().name());
-            pStatement.setString(4, multiplePossibleQuestion.GetLevel().name());
+            pStatement.setString(1, multiplePossibleQuestion.getQuestion());
+            pStatement.setInt(2, multiplePossibleQuestion.getAnswer());
+            pStatement.setString(3, multiplePossibleQuestion.getCategory().name());
+            pStatement.setString(4, multiplePossibleQuestion.getLevel().name());
             pStatement.executeUpdate();
             
-            Map<String,String> allAnswers =multiplePossibleQuestion.GetAllAnswer();
-            for (int i = 1; i <= multiplePossibleQuestion.GetAllAnswer().size(); i++) 
+            Map<String,String> allAnswers =multiplePossibleQuestion.getAllAnswer();
+            for (int i = 1; i <= multiplePossibleQuestion.getAllAnswer().size(); i++) 
             {
                 pStatement = connection.prepareStatement("insert into multiple_Possible_Answers (ANSWER, QUESTION_CODE, ANSWER_CODE)"
                         + " values (?, ?, ?)");
                 pStatement.setString(1, allAnswers.get(i));
-                pStatement.setInt(2, multiplePossibleQuestion.GetCode());
+                pStatement.setInt(2, multiplePossibleQuestion.getCode());
                 pStatement.setInt(3, i);
                 pStatement.executeUpdate();
             }
@@ -75,9 +75,9 @@ public class MultiplePossibleQuestionDB {
 
             while (rs.next()) 
             {
-                MultiplePossibleQuestion multiplePossibleQuestion = SetQuestion(rs);
+                MultiplePossibleQuestion multiplePossibleQuestion = setQuestion(rs);
                 
-                SetAnswers(multiplePossibleQuestion);
+                setAnswers(multiplePossibleQuestion);
                 
                 multiplePossibleQuestions.add(multiplePossibleQuestion);
             }
@@ -90,10 +90,10 @@ public class MultiplePossibleQuestionDB {
         return multiplePossibleQuestions;
     }
 
-    private void SetAnswers(MultiplePossibleQuestion multiplePossibleQuestion) throws SQLException 
+    private void setAnswers(MultiplePossibleQuestion multiplePossibleQuestion) throws SQLException 
     {
         PreparedStatement pStatement = connection.prepareStatement("select * from Multiple_Possible_Answers where Question_Code=?");
-        pStatement.setInt(1, multiplePossibleQuestion.GetCode());
+        pStatement.setInt(1, multiplePossibleQuestion.getCode());
         ResultSet rs2 = pStatement.executeQuery();
         
         while (rs2.next())
@@ -103,18 +103,18 @@ public class MultiplePossibleQuestionDB {
         }
     }
 
-    private MultiplePossibleQuestion SetQuestion(ResultSet rs) throws SQLException 
+    private MultiplePossibleQuestion setQuestion(ResultSet rs) throws SQLException 
     {
         MultiplePossibleQuestion multiplePossibleQuestion = new MultiplePossibleQuestion();
-        multiplePossibleQuestion.SetCode(rs.getInt("code"));
-        multiplePossibleQuestion.SetQuestion(rs.getString("question"));
-        multiplePossibleQuestion.SetAnswer(rs.getInt("answer"));
-        multiplePossibleQuestion.SetCategory(Category.valueOf(rs.getString("category")));
-        multiplePossibleQuestion.SetLevel(Level.valueOf(rs.getString("level")));
+        multiplePossibleQuestion.setCode(rs.getInt("code"));
+        multiplePossibleQuestion.setQuestion(rs.getString("question"));
+        multiplePossibleQuestion.setAnswer(rs.getInt("answer"));
+        multiplePossibleQuestion.setCategory(Category.valueOf(rs.getString("category")));
+        multiplePossibleQuestion.setLevel(Level.valueOf(rs.getString("level")));
         return multiplePossibleQuestion;
     }
 
-    public List<MultiplePossibleQuestion> GetQuestionsByCategoryAndLevel(HashMap<String,String> categoryLevel) 
+    public List<MultiplePossibleQuestion> getQuestionsByCategoryAndLevel(HashMap<String,String> categoryLevel) 
     {
         List<MultiplePossibleQuestion> multiplePossibleQuestions = new ArrayList<MultiplePossibleQuestion>();
 
@@ -132,8 +132,8 @@ public class MultiplePossibleQuestionDB {
                 ResultSet rs = pStatement.executeQuery();
                 if (rs.next()) 
                 {
-                    MultiplePossibleQuestion multiplePossibleQuestion = SetQuestion(rs);
-                    SetAnswers(multiplePossibleQuestion);
+                    MultiplePossibleQuestion multiplePossibleQuestion = setQuestion(rs);
+                    setAnswers(multiplePossibleQuestion);
                     multiplePossibleQuestions.add(multiplePossibleQuestion);
                 }
             }

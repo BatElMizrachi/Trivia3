@@ -12,43 +12,43 @@ public abstract class QuestionBase implements IQuestionBase, Serializable
     private Level level;
     private int code;
     
-    public abstract QuestionType GetQuestionType();
+    public abstract QuestionType getQuestionType();
     
     @Override
-    public Category GetCategory() {
+    public Category getCategory() {
         return this.category;
     }
 
     @Override
-    public Level GetLevel() {
+    public Level getLevel() {
         return this.level;
     }
     
     @Override
-    public int GetCode() {
+    public int getCode() {
         return this.code;
     }
     
     @Override
-    public void SetCategory(Category category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 
     @Override
-    public void SetLevel(Level level) {
+    public void setLevel(Level level) {
         this.level = level;
     }
     
     @Override
-    public void SetCode(int code) {
+    public void setCode(int code) {
         this.code = code;
     }
     
-    public void SetQuestion(String question)
+    public void setQuestion(String question)
     {
         this.question = question;
     }
-    public String GetQuestion()
+    public String getQuestion()
     {
         return this.question;
     }

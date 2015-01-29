@@ -7,16 +7,16 @@ public class OpenQuestion extends QuestionBase
     private String answer;
 
     @Override
-    public QuestionType GetQuestionType() {
+    public QuestionType getQuestionType() {
         return QuestionType.Open;
     }
     
-    public void SetAnswer(String answer)
+    public void setAnswer(String answer)
     {
         this.answer = answer;
     }
     
-    public String GetAnswer()
+    public String getAnswer()
     {
         return this.answer;
     }

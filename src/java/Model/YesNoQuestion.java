@@ -7,21 +7,21 @@ public class YesNoQuestion extends QuestionBase
     private boolean answer;
 
     @Override
-    public QuestionType GetQuestionType() {
+    public QuestionType getQuestionType() {
         return QuestionType.YesNo;
     }
 
-    public void SetAnswer(boolean answer)
+    public void setAnswer(boolean answer)
     {
         this.answer = answer;
     }
     
-    public void SetAnswer(String answer)
+    public void setAnswer(String answer)
     {
         this.answer = answer.equals("Yes");
     }
     
-    public boolean GetAnswer()
+    public boolean getAnswer()
     {
         return this.answer;
     }

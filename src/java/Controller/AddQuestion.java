@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import Model.*;
+import javax.servlet.http.HttpSession;
 
 @WebServlet(urlPatterns = {"/AddQuestion"})
 public class AddQuestion extends HttpServlet {
@@ -38,19 +39,26 @@ public class AddQuestion extends HttpServlet {
                 saveQuestionResult = "/ErrorSavedQuestion.jsp";
             } finally {
                 RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(saveQuestionResult);
-                dispatcher.include(request, response);
+                dispatcher.forward(request, response);
             }
-        } else if (request.getParameter("count") != null) // view - for multiple
+        } 
+        else if (request.getParameter("count") != null) // view - for multiple
         {
+            HttpSession session = request.getSession();
+            MultiplePossibleQuestion multpleToAdd = new MultiplePossibleQuestion();
+            multpleToAdd.setLevel(Utils.getLevelByUserChoose((String) request.getParameter("Level")));
+            multpleToAdd.setCategory(Utils.getCategoryByUserChoose((String) request.getParameter("Category")));
+            session.setAttribute("multpleToAdd", multpleToAdd);
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/AddMultipleQuestion.jsp");
-            dispatcher.include(request, response);
-        } else // view - to insert question 
+            dispatcher.forward(request, response);
+        }
+        else // view - to insert question 
         {
 
             // להכניס את השטות לBEAN
-            Level level = Utils.GetLevelByUserChoose((String) request.getParameter("Level"));
-            Category category = Utils.GetCategoryByUserChoose((String) request.getParameter("Category"));
-            QuestionType questionType = Utils.GetQuestionTypeByUserChoose((String) request.getParameter("QuestionType"));
+            Level level = Utils.getLevelByUserChoose((String) request.getParameter("Level"));
+            Category category = Utils.getCategoryByUserChoose((String) request.getParameter("Category"));
+            QuestionType questionType = Utils.getQuestionTypeByUserChoose((String) request.getParameter("QuestionType"));
             String insertQuestion = "";
             
             try 
@@ -84,20 +92,20 @@ public class AddQuestion extends HttpServlet {
         if (request.getParameter("openAnswer") != null)
         {
             OpenQuestion openQuestion = new OpenQuestion();
-            openQuestion.SetAnswer(request.getParameter("openAnswer"));
-            openQuestion.SetQuestion(request.getParameter("question"));
-            openQuestion.SetCategory(Utils.GetCategoryByUserChoose(request.getParameter("Category")));
-            openQuestion.SetLevel(Utils.GetLevelByUserChoose(request.getParameter("Level")));
+            openQuestion.setAnswer(request.getParameter("openAnswer"));
+            openQuestion.setQuestion(request.getParameter("question"));
+            openQuestion.setCategory(Utils.getCategoryByUserChoose(request.getParameter("Category")));
+            openQuestion.setLevel(Utils.getLevelByUserChoose(request.getParameter("Level")));
             allQuestions.add(openQuestion);
             FileHandler.WriteQuestions(allQuestions, request.getRealPath("/"));
         } 
         else if (request.getParameter("yesNoAnswer") != null) 
         {
             YesNoQuestion yesNoQuestion = new YesNoQuestion();
-            yesNoQuestion.SetAnswer(request.getParameter("yesNoAnswer"));
-            yesNoQuestion.SetQuestion(request.getParameter("question"));
-            yesNoQuestion.SetCategory(Utils.GetCategoryByUserChoose(request.getParameter("Category")));
-            yesNoQuestion.SetLevel(Utils.GetLevelByUserChoose(request.getParameter("Level")));
+            yesNoQuestion.setAnswer(request.getParameter("yesNoAnswer"));
+            yesNoQuestion.setQuestion(request.getParameter("question"));
+            yesNoQuestion.setCategory(Utils.getCategoryByUserChoose(request.getParameter("Category")));
+            yesNoQuestion.setLevel(Utils.getLevelByUserChoose(request.getParameter("Level")));
             allQuestions.add(yesNoQuestion);
             FileHandler.WriteQuestions(allQuestions, request.getRealPath("/"));
         }
@@ -107,8 +115,8 @@ public class AddQuestion extends HttpServlet {
             errorMessage = "The question will not save: <br>";
 
             MultiplePossibleQuestion multiplePossibleQuestion = new MultiplePossibleQuestion();
-            multiplePossibleQuestion.SetAnswer(Integer.parseInt(request.getParameter("numberOfAnswer")));
-            multiplePossibleQuestion.SetQuestion(request.getParameter("question"));
+            multiplePossibleQuestion.setAnswer(Integer.parseInt(request.getParameter("numberOfAnswer")));
+            multiplePossibleQuestion.setQuestion(request.getParameter("question"));
             int numberOfPossibleAnswer = 0;
 
             for (int i = 1; i <= Integer.parseInt(request.getParameter("count")); i++) {
@@ -133,8 +141,8 @@ public class AddQuestion extends HttpServlet {
             if (cantSave) {
                 throw new InvalidValueException();
             } else {
-                multiplePossibleQuestion.SetCategory(Utils.GetCategoryByUserChoose(request.getParameter("Category")));
-                multiplePossibleQuestion.SetLevel(Utils.GetLevelByUserChoose(request.getParameter("Level")));
+                multiplePossibleQuestion.setCategory(Utils.getCategoryByUserChoose(request.getParameter("Category")));
+                multiplePossibleQuestion.setLevel(Utils.getLevelByUserChoose(request.getParameter("Level")));
                 allQuestions.add(multiplePossibleQuestion);
                 FileHandler.WriteQuestions(allQuestions, request.getRealPath("/"));
             }

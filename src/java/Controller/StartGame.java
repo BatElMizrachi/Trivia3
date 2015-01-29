@@ -48,6 +48,10 @@ public class StartGame extends HttpServlet
                 out.println("<link href=\"Style/Question.css\" rel=\"stylesheet\" type=\"text/css\"/>");
                 out.println("</head>");
                 out.println("<body>");
+                
+         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/testBean.jsp");
+        dispatcher.forward(request, response);
+                
                 AskQuestionForm(out, session);
                 out.println("</body>");
                 out.println("</html>");
@@ -56,7 +60,7 @@ public class StartGame extends HttpServlet
         else if(request.getParameter("Check") != null) // Check if correct and ask if wants more
         {
             int index = (int)session.getAttribute("NumofQuestions");
-            QuestionBase currentQuestion = ((Manager)session.getAttribute("manager")).GetQuestionByIndex(index);
+            QuestionBase currentQuestion = ((Manager)session.getAttribute("manager")).getQuestionByIndex(index);
             CheckAnswer(request, currentQuestion, response);
         }
         else if(request.getParameter("endOrNot") != null && request.getParameter("endOrNot").equals("End game")) // show points
@@ -91,12 +95,12 @@ public class StartGame extends HttpServlet
                 
                 if(!((Manager)session.getAttribute("manager")).IsQuestionIsEmpty())
                 {
-                    QuestionBase currentQuestion = ((Manager)session.getAttribute("manager")).GetQuestionByIndex(index);
-                    if(currentQuestion.GetQuestionType() == QuestionType.YesNo)
+                    QuestionBase currentQuestion = ((Manager)session.getAttribute("manager")).getQuestionByIndex(index);
+                    if(currentQuestion.getQuestionType() == QuestionType.YesNo)
                     {
                         out.println("<script language=\"javascript\">");
                         out.println("function validateForm()\n");
-                        if(currentQuestion.GetQuestionType() == QuestionType.Open)
+                        if(currentQuestion.getQuestionType() == QuestionType.Open)
                         {
                             out.println("    var x = document.forms[\"AskForm\"][\"openAnswer\"].value;\n" +
                                         "    if (x==null || x==\"\") {\n" +
@@ -105,7 +109,7 @@ public class StartGame extends HttpServlet
                                         "    }\n" +
                                         "}\n");
                         }
-                        else if (currentQuestion.GetQuestionType() == QuestionType.MultiplePossible)
+                        else if (currentQuestion.getQuestionType() == QuestionType.MultiplePossible)
                         {
                             out.println("    var y = document.forms[\"AskForm\"][\"answerNumber\"].value;\n" +
                                         "    if (y==null || y==\"\") {\n" +
@@ -154,24 +158,24 @@ public class StartGame extends HttpServlet
     {
         boolean isCorrect = false;
         
-        if(currentQuestion.GetQuestionType().equals(QuestionType.Open))
+        if(currentQuestion.getQuestionType().equals(QuestionType.Open))
         {
-            if(((OpenQuestion)currentQuestion).GetAnswer().equals(request.getParameter("openAnswer")))
+            if(((OpenQuestion)currentQuestion).getAnswer().equals(request.getParameter("openAnswer")))
             {
                 isCorrect = true;
             }
         }
-        else if(currentQuestion.GetQuestionType().equals(QuestionType.YesNo))
+        else if(currentQuestion.getQuestionType().equals(QuestionType.YesNo))
         {
-            if((((YesNoQuestion)currentQuestion).GetAnswer() && request.getParameter("yesNoAnswer").equals("Yes")) ||
-                    (!((YesNoQuestion)currentQuestion).GetAnswer() && request.getParameter("yesNoAnswer").equals("No")))
+            if((((YesNoQuestion)currentQuestion).getAnswer() && request.getParameter("yesNoAnswer").equals("Yes")) ||
+                    (!((YesNoQuestion)currentQuestion).getAnswer() && request.getParameter("yesNoAnswer").equals("No")))
             {
                 isCorrect = true;
             }
         }
-        else if (currentQuestion.GetQuestionType().equals(QuestionType.MultiplePossible))
+        else if (currentQuestion.getQuestionType().equals(QuestionType.MultiplePossible))
         {
-            if(((MultiplePossibleQuestion)currentQuestion).GetAnswer() ==
+            if(((MultiplePossibleQuestion)currentQuestion).getAnswer() ==
                     Integer.parseInt(request.getParameter("answerNumber")))
             {
                 isCorrect = true;
@@ -247,20 +251,21 @@ public class StartGame extends HttpServlet
     private void AskQuestionForm(final PrintWriter out, HttpSession session) 
     {
         int index = (int)session.getAttribute("NumofQuestions");
-        QuestionBase currentQuestion = ((Manager)session.getAttribute("manager")).GetQuestionByIndex(index);
-        
+        QuestionBase currentQuestion = ((Manager)session.getAttribute("manager")).getQuestionByIndex(index);
+        //RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/testBean.jsp");
+        //dispatcher.forward(request, response);
         out.println("<form name=\"AskForm\">");
         out.println("<input type=\"hidden\" name=\"Check\" value=\"Yes\">");
         UpdateCategoryCount(session, currentQuestion);
         
-        if(currentQuestion.GetQuestionType().equals(QuestionType.Open))
+        if(currentQuestion.getQuestionType().equals(QuestionType.Open))
         {
             ShowQuestion(out, currentQuestion);
             out.println("<h1>Your answer:</h1>");
             out.println("<input type=\"text\" name=\"openAnswer\" class=\"Answer\">");
             
         }
-        else if(currentQuestion.GetQuestionType().equals(QuestionType.YesNo))
+        else if(currentQuestion.getQuestionType().equals(QuestionType.YesNo))
         {
             ShowQuestion(out, currentQuestion);
             
@@ -268,12 +273,12 @@ public class StartGame extends HttpServlet
             out.println("<input type=\"radio\" name=\"yesNoAnswer\" class=\"list-answers\" value=\"Yes\" checked>Yes");
             out.println("<input type=\"radio\" name=\"yesNoAnswer\" class=\"list-answers\" value=\"No\">No");  
         }
-        else if (currentQuestion.GetQuestionType().equals(QuestionType.MultiplePossible))
+        else if (currentQuestion.getQuestionType().equals(QuestionType.MultiplePossible))
         {
             ShowQuestion(out, currentQuestion);
             out.println("   <ol>");
             
-            Map<String, String> allAnswer = ((MultiplePossibleQuestion)currentQuestion).GetAllAnswer();
+            Map<String, String> allAnswer = ((MultiplePossibleQuestion)currentQuestion).getAllAnswer();
             for (int i = 1; i <= allAnswer.size(); i++) {
                 out.println("       <li>" + allAnswer.get(Integer.toString(i)) + "</li>");
             }
@@ -291,27 +296,27 @@ public class StartGame extends HttpServlet
 
     private void ShowQuestion(final PrintWriter out, QuestionBase currentQuestion) {
         out.println("<h1>The question is:</h1>");
-        out.println("<h2>"+ currentQuestion.GetQuestion() +"</h2>");
+        out.println("<h2>"+ currentQuestion.getQuestion() +"</h2>");
     }
 
     private void UpdateCategoryCount(HttpSession session, QuestionBase question)
     {
-        if(question.GetCategory() == Category.Food)
+        if(question.getCategory() == Category.Food)
         {
             int count = (int)session.getAttribute("FoodCount");
             session.setAttribute("FoodCount", count+1);
         }
-        else if(question.GetCategory() == Category.History)
+        else if(question.getCategory() == Category.History)
         {
             int count = (int)session.getAttribute("HistoryCount");
             session.setAttribute("HistoryCount", count+1);
         }
-        else if(question.GetCategory() == Category.Sport)
+        else if(question.getCategory() == Category.Sport)
         {
             int count = (int)session.getAttribute("SportCount");
             session.setAttribute("SportCount", count+1);
         }
-        else if(question.GetCategory() == Category.Other)
+        else if(question.getCategory() == Category.Other)
         {
             int count = (int)session.getAttribute("OtherCount");
             session.setAttribute("OtherCount", count+1);
@@ -321,7 +326,6 @@ public class StartGame extends HttpServlet
     protected HashMap<String,String> GetCategoriesLevelByUserChoose(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
-       // ArrayList<String,String> categoryLevelUser = new ArrayList<String,String>();
         HashMap<String,String> categoryLevelUser = new HashMap<String,String>();
         String[] category = request.getParameterValues("Category");
         String categoryLevel;

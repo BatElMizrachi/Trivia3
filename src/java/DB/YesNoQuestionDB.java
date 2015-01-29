@@ -20,10 +20,10 @@ public class YesNoQuestionDB {
             PreparedStatement pStatement;
             pStatement = connection.prepareStatement("insert into YES_NO_QUESTION (QUESTION, ANSWER, CATEGORY, LEVEL)"
                     + " values (?, ?, ?, ? )");
-            pStatement.setString(1, yesNoQuestion.GetQuestion());
-            pStatement.setBoolean(2, yesNoQuestion.GetAnswer());
-            pStatement.setString(3, yesNoQuestion.GetCategory().name());
-            pStatement.setString(4, yesNoQuestion.GetLevel().name());
+            pStatement.setString(1, yesNoQuestion.getQuestion());
+            pStatement.setBoolean(2, yesNoQuestion.getAnswer());
+            pStatement.setString(3, yesNoQuestion.getCategory().name());
+            pStatement.setString(4, yesNoQuestion.getLevel().name());
 
             pStatement.executeUpdate();
         }
@@ -59,7 +59,7 @@ public class YesNoQuestionDB {
 
             while (rs.next()) 
             {
-                YesNoQuestion yesNoQuestion = SetQuestion(rs);
+                YesNoQuestion yesNoQuestion = setQuestion(rs);
                 yesNoQuestions.add(yesNoQuestion);
             }
         } 
@@ -71,17 +71,17 @@ public class YesNoQuestionDB {
         return yesNoQuestions;
     }
 
-    private YesNoQuestion SetQuestion(ResultSet rs) throws SQLException {
+    private YesNoQuestion setQuestion(ResultSet rs) throws SQLException {
         YesNoQuestion yesNoQuestion = new YesNoQuestion();
-        yesNoQuestion.SetCode(rs.getInt("code"));
-        yesNoQuestion.SetQuestion(rs.getString("question"));
-        yesNoQuestion.SetAnswer(rs.getBoolean("answer"));
-        yesNoQuestion.SetCategory(Category.valueOf(rs.getString("category")));
-        yesNoQuestion.SetLevel(Level.valueOf(rs.getString("level")));
+        yesNoQuestion.setCode(rs.getInt("code"));
+        yesNoQuestion.setQuestion(rs.getString("question"));
+        yesNoQuestion.setAnswer(rs.getBoolean("answer"));
+        yesNoQuestion.setCategory(Category.valueOf(rs.getString("category")));
+        yesNoQuestion.setLevel(Level.valueOf(rs.getString("level")));
         return yesNoQuestion;
     }
 
-    public List<YesNoQuestion> GetQuestionsByCategoryAndLevel(HashMap<String,String> categoryLevel) 
+    public List<YesNoQuestion> getQuestionsByCategoryAndLevel(HashMap<String,String> categoryLevel) 
     {
         List<YesNoQuestion> yesNoQuestions = new ArrayList<YesNoQuestion>();
 
@@ -99,7 +99,7 @@ public class YesNoQuestionDB {
                 ResultSet rs = pStatement.executeQuery();
                 if (rs.next()) 
                 {
-                    YesNoQuestion yesNoQuestion = SetQuestion(rs);
+                    YesNoQuestion yesNoQuestion = setQuestion(rs);
                     yesNoQuestions.add(yesNoQuestion);
                 }
             }

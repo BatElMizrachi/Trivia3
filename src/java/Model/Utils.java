@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Utils
 {
-    public static Level GetLevelByUserChoose(String levelName)
+    public static Level getLevelByUserChoose(String levelName)
     {
         if(levelName.equals("Medium"))
             return Level.Medium;
@@ -14,7 +14,7 @@ public class Utils
         return Level.Easy;
     }
  
-    public static Category GetCategoryByUserChoose(String categoryName)
+    public static Category getCategoryByUserChoose(String categoryName)
     {
         if(categoryName.equals("Food"))
             return Category.Food;
@@ -26,7 +26,7 @@ public class Utils
         return Category.Other;
     }
     
-    public static QuestionType GetQuestionTypeByUserChoose(String questionTypeName)
+    public static QuestionType getQuestionTypeByUserChoose(String questionTypeName)
     {
         if(questionTypeName.equals("Yes/No"))
             return QuestionType.YesNo;

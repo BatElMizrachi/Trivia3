@@ -1,11 +1,12 @@
 package Model;
 
+import java.io.Serializable;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class MultiplePossibleQuestion extends QuestionBase
+public class MultiplePossibleQuestion extends QuestionBase implements Serializable
 {
     private int answer;
     private Map<String, String> allAnswers;
@@ -15,26 +16,26 @@ public class MultiplePossibleQuestion extends QuestionBase
     }
     
     @Override
-    public QuestionType GetQuestionType() {
+    public QuestionType getQuestionType() {
         return QuestionType.MultiplePossible;
     }
 
-    public void SetAnswer(int answer)
+    public void setAnswer(int answer)
     {
         this.answer = answer;
     }
     
-    public int GetAnswer()
+    public int getAnswer()
     {
         return this.answer;
     }
     
-    public void SetAllAnswer(Map<String, String> allAnswers)
+    public void setAllAnswer(Map<String, String> allAnswers)
     {
         this.allAnswers.putAll(allAnswers);
     }
     
-    public void SetAllAnswer(HashMap<String, String> allAnswers)
+    public void setAllAnswer(HashMap<String, String> allAnswers)
     {
         this.allAnswers.putAll(allAnswers);
     }
@@ -43,7 +44,7 @@ public class MultiplePossibleQuestion extends QuestionBase
     {
         this.allAnswers.put(key, answer);
     }
-    public Map<String, String> GetAllAnswer()
+    public Map<String, String> getAllAnswer()
     {
         return this.allAnswers;
     }
@@ -56,7 +57,7 @@ public class MultiplePossibleQuestion extends QuestionBase
         }
     }
     
-    public String GetCorrectAnswer()
+    public String getCorrectAnswer()
     {
         return this.allAnswers.get(this.answer);
     }

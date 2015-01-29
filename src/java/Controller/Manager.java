@@ -12,7 +12,7 @@ public class Manager
 {
     ArrayList<QuestionBase> questions;
     
-    public QuestionBase GetQuestionByIndex(int index)
+    public QuestionBase getQuestionByIndex(int index)
     {
         return questions.get(index);
     }
@@ -38,8 +38,8 @@ public class Manager
         questions = new ArrayList<QuestionBase>();
         for (QuestionBase question : allQuestions)
         {
-            if ((CategoriesLevel.containsKey(question.GetCategory().toString()))
-                    && (CategoriesLevel.containsValue(question.GetLevel().toString())))
+            if ((CategoriesLevel.containsKey(question.getCategory().toString()))
+                    && (CategoriesLevel.containsValue(question.getLevel().toString())))
             {
                 questions.add(question);
             }

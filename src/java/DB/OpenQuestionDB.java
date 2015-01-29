@@ -21,10 +21,10 @@ public class OpenQuestionDB
             PreparedStatement pStatement;
             pStatement = connection.prepareStatement("insert into OPEN_QUESTION (QUESTION, ANSWER, CATEGORY, LEVEL)"
                     + " values (?, ?, ?, ? )");
-            pStatement.setString(1, openQuestion.GetQuestion());
-            pStatement.setString(2, openQuestion.GetAnswer());
-            pStatement.setString(3, openQuestion.GetCategory().name());
-            pStatement.setString(4, openQuestion.GetLevel().name());
+            pStatement.setString(1, openQuestion.getQuestion());
+            pStatement.setString(2, openQuestion.getAnswer());
+            pStatement.setString(3, openQuestion.getCategory().name());
+            pStatement.setString(4, openQuestion.getLevel().name());
 
             pStatement.executeUpdate();
         }
@@ -60,7 +60,7 @@ public class OpenQuestionDB
 
             while (rs.next()) 
             {
-                OpenQuestion openQuestion = SetQuestion(rs);
+                OpenQuestion openQuestion = setQuestion(rs);
                 openQuestions.add(openQuestion);
             }
         } 
@@ -72,18 +72,18 @@ public class OpenQuestionDB
         return openQuestions;
     }
 
-    private OpenQuestion SetQuestion(ResultSet rs) throws SQLException 
+    private OpenQuestion setQuestion(ResultSet rs) throws SQLException 
     {
         OpenQuestion openQuestion = new OpenQuestion();
-        openQuestion.SetCode(rs.getInt("code"));
-        openQuestion.SetQuestion(rs.getString("question"));
-        openQuestion.SetAnswer(rs.getString("answer"));
-        openQuestion.SetCategory(Category.valueOf(rs.getString("category")));
-        openQuestion.SetLevel(Level.valueOf(rs.getString("level")));
+        openQuestion.setCode(rs.getInt("code"));
+        openQuestion.setQuestion(rs.getString("question"));
+        openQuestion.setAnswer(rs.getString("answer"));
+        openQuestion.setCategory(Category.valueOf(rs.getString("category")));
+        openQuestion.setLevel(Level.valueOf(rs.getString("level")));
         return openQuestion;
     }
 
-    public List<OpenQuestion> GetQuestionsByCategoryAndLevel(HashMap<String,String> categoryLevel) 
+    public List<OpenQuestion> getQuestionsByCategoryAndLevel(HashMap<String,String> categoryLevel) 
     {
         List<OpenQuestion> openQuestions = new ArrayList<OpenQuestion>();
 
@@ -101,7 +101,7 @@ public class OpenQuestionDB
                 ResultSet rs = pStatement.executeQuery();
                 if (rs.next()) 
                 {
-                    OpenQuestion openQuestion = SetQuestion(rs);
+                    OpenQuestion openQuestion = setQuestion(rs);
                     openQuestions.add(openQuestion);
                 }
             }

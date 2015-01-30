@@ -1,5 +1,6 @@
 package Controller;
 
+import DB.MultiplePossibleQuestionDB;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import Model.*;
+import DB.*;
 
 @WebServlet(urlPatterns = {"/AddQuestion"})
 public class AddQuestion extends HttpServlet {
@@ -17,6 +19,9 @@ public class AddQuestion extends HttpServlet {
     private String errorMessage;
     private QuestionBase addQuestion;
     private String link = "";
+    private MultiplePossibleQuestionDB multiplePossibleQuestionDB;
+    private OpenQuestionDB openQuestionDB;
+    private YesNoQuestionDB yesNoQuestionDB;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, Exception {
@@ -42,18 +47,21 @@ public class AddQuestion extends HttpServlet {
 
                 if (questionType.equals(QuestionType.Open))
                 {
+                    openQuestionDB  = new OpenQuestionDB();
                     addQuestion = new OpenQuestion();
                     request.setAttribute("openToAdd", addQuestion);
                     link = "/InsertQuestionOpen.jsp";
                 } 
                 else if (questionType.equals(QuestionType.YesNo))
                 {
+                    yesNoQuestionDB = new YesNoQuestionDB();
                     addQuestion = new YesNoQuestion();
                     request.setAttribute("yesNoToAdd", addQuestion);
                     link = "/InsertQuestionYesNo.jsp";
                 } 
                 else if (questionType.equals(QuestionType.MultiplePossible)) 
                 {
+                    multiplePossibleQuestionDB = new MultiplePossibleQuestionDB();
                     addQuestion = new MultiplePossibleQuestion();
                     request.setAttribute("multpleToAdd", addQuestion);
                     link = "/InsertQuestionMultiple.jsp";
@@ -98,8 +106,8 @@ public class AddQuestion extends HttpServlet {
             openQuestion.setQuestion(request.getParameter("question"));
             openQuestion.setCategory(Utils.getCategoryByUserChoose(request.getParameter("Category")));
             openQuestion.setLevel(Utils.getLevelByUserChoose(request.getParameter("Level")));
-            allQuestions.add(openQuestion);
-            FileHandler.WriteQuestions(allQuestions, request.getRealPath("/"));
+            
+            openQuestionDB.AddQuestion(openQuestion);
         } 
         else if (request.getParameter("yesNoAnswer") != null) 
         {
@@ -108,8 +116,8 @@ public class AddQuestion extends HttpServlet {
             yesNoQuestion.setQuestion(request.getParameter("question"));
             yesNoQuestion.setCategory(Utils.getCategoryByUserChoose(request.getParameter("Category")));
             yesNoQuestion.setLevel(Utils.getLevelByUserChoose(request.getParameter("Level")));
-            allQuestions.add(yesNoQuestion);
-            FileHandler.WriteQuestions(allQuestions, request.getRealPath("/"));
+            
+            yesNoQuestionDB.AddQuestion(yesNoQuestion);
         }
         else if (request.getParameter("numberOfAnswer") != null) 
         {
@@ -140,15 +148,19 @@ public class AddQuestion extends HttpServlet {
                 errorMessage += "The correct answer number is not valid - must be between 1 to " + numberOfPossibleAnswer + ".";
             }
 
-            if (cantSave) {
+            if (cantSave) 
+            {
                 throw new InvalidValueException();
-            } else {
+            } 
+            else 
+            {
                 multiplePossibleQuestion.setCategory(Utils.getCategoryByUserChoose(request.getParameter("Category")));
                 multiplePossibleQuestion.setLevel(Utils.getLevelByUserChoose(request.getParameter("Level")));
-                allQuestions.add(multiplePossibleQuestion);
-                FileHandler.WriteQuestions(allQuestions, request.getRealPath("/"));
+                multiplePossibleQuestionDB.AddQuestion(multiplePossibleQuestion);
             }
-        } else {
+        } 
+        else 
+        {
             throw new Exception();
         }
     }

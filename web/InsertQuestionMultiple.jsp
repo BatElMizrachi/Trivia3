@@ -31,6 +31,7 @@
         </script>
     </head>
     <body>
+        <jsp:useBean id="multpleToAdd" type="Model.MultiplePossibleQuestion" scope="request" />
         <form name="showViewQuestionToAdd" Action="AddQuestion" onsubmit="return(validateForm());">
             <h1>Insert question:</h1>
             <input type="text" name="question" width="400" height="50">
@@ -38,8 +39,8 @@
             <h1>Insert count of possible answers:</h1>
             <input type="text" name="count" class="count">      
             <button type="submit" class="btn btn-default btn-continue" value="Continue">Continue</button>
-            <input type="hidden" name="Level" value=<%= request.getParameter("Level")%>>
-            <input type="hidden" name="Category" value=<%= request.getParameter("Category")%>>
+            <input type="hidden" name="Level" value=<jsp:getProperty name="multpleToAdd" property="level" />>
+            <input type="hidden" name="Category" value=<jsp:getProperty name="multpleToAdd" property="category" />>
         </form>
     </body>
 </html>

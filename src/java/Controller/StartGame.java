@@ -1,13 +1,7 @@
 package Controller; 
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -33,29 +27,11 @@ public class StartGame extends HttpServlet
         {
             manager=new Manager();
             session.setAttribute ("manager", manager);
-            
         }
         
         if(request.getParameter("endOrNot") != null && request.getParameter("endOrNot").equals("Continue")) // ask question
         {
-            try (PrintWriter out = response.getWriter()) 
-            {
-                out.println("<!DOCTYPE html>");
-                out.println("<html>");
-                out.println("<head>");
-                out.println("<title>Servlet StartGame</title>");    
-                out.println("<link href=\"Style/appliction.css\" rel=\"stylesheet\" type=\"text/css\"/>");
-                out.println("<link href=\"Style/Question.css\" rel=\"stylesheet\" type=\"text/css\"/>");
-                out.println("</head>");
-                out.println("<body>");
-                
-         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/testBean.jsp");
-        dispatcher.forward(request, response);
-                
-                AskQuestionForm(out, session);
-                out.println("</body>");
-                out.println("</html>");
-            }
+            AskQuestionForm(request,response, session);
         }
         else if(request.getParameter("Check") != null) // Check if correct and ask if wants more
         {
@@ -84,71 +60,14 @@ public class StartGame extends HttpServlet
             session.setAttribute("SportCount", 0);
             session.setAttribute("OtherCount", 0);
             
-            int index = 0;
-            
-            try (PrintWriter out = response.getWriter()) 
+            if(((Manager)session.getAttribute("manager")).IsQuestionIsEmpty())
             {
-                out.println("<!DOCTYPE html>");
-                out.println("<html>");
-                out.println("<head>");
-                out.println("<title>Servlet StartGame</title>");   
-                
-                if(!((Manager)session.getAttribute("manager")).IsQuestionIsEmpty())
-                {
-                    QuestionBase currentQuestion = ((Manager)session.getAttribute("manager")).getQuestionByIndex(index);
-                    if(currentQuestion.getQuestionType() == QuestionType.YesNo)
-                    {
-                        out.println("<script language=\"javascript\">");
-                        out.println("function validateForm()\n");
-                        if(currentQuestion.getQuestionType() == QuestionType.Open)
-                        {
-                            out.println("    var x = document.forms[\"AskForm\"][\"openAnswer\"].value;\n" +
-                                        "    if (x==null || x==\"\") {\n" +
-                                        "        alert(\"Answer field must be filled out\");\n" +
-                                        "        return false;\n" +
-                                        "    }\n" +
-                                        "}\n");
-                        }
-                        else if (currentQuestion.getQuestionType() == QuestionType.MultiplePossible)
-                        {
-                            out.println("    var y = document.forms[\"AskForm\"][\"answerNumber\"].value;\n" +
-                                        "    if (y==null || y==\"\") {\n" +
-                                        "        alert(\"Answer field must be filled out\");\n" +
-                                        "        return false;\n" +
-                                        "    }\n" +
-                                        "    if (isNaN(parseFloat(y))) {\n" +
-                                        "        alert(\"Answer field must be numeric\");\n" +
-                                        "        return false;\n" +
-                                        "    }\n" +
-                                        "    if (y < 1) {\n" +
-                                        "        alert(\"Answer must be bigger then 0\");\n" +
-                                        "        return false;\n" +
-                                        "    }\n" +
-                                        "}\n" );
-                        }
-
-                        out.println("</script>");
-                    }
-                }
-                
-                out.println("<link href=\"Style/appliction.css\" rel=\"stylesheet\" type=\"text/css\"/>");
-                out.println("<link href=\"Style/Question.css\" rel=\"stylesheet\" type=\"text/css\"/>");
-                out.println("</head>");
-                out.println("<body>");
-                
-                if(((Manager)session.getAttribute("manager")).IsQuestionIsEmpty())
-                {
-                    out.println("<form name=\"Failure\">");
-                    out.println("<h1>There are no questions thet meet the conditions</h1>");
-                    out.println("</form>");
-                }
-                else
-                {
-                    AskQuestionForm(out, session);
-                }
-                
-                out.println("</body>");
-                out.println("</html>");
+                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/NoQuestion.html");
+                dispatcher.include(request, response);
+            }
+            else
+            {
+                AskQuestionForm(request,response, session);
             }
         }
     }
@@ -248,55 +167,32 @@ public class StartGame extends HttpServlet
         dispatcher.include(request, response);
     }
 
-    private void AskQuestionForm(final PrintWriter out, HttpSession session) 
+    private void AskQuestionForm(HttpServletRequest request,HttpServletResponse response, HttpSession session) throws ServletException, IOException 
     {
         int index = (int)session.getAttribute("NumofQuestions");
         QuestionBase currentQuestion = ((Manager)session.getAttribute("manager")).getQuestionByIndex(index);
-        //RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/testBean.jsp");
-        //dispatcher.forward(request, response);
-        out.println("<form name=\"AskForm\">");
-        out.println("<input type=\"hidden\" name=\"Check\" value=\"Yes\">");
+        String link = "";
+
         UpdateCategoryCount(session, currentQuestion);
         
         if(currentQuestion.getQuestionType().equals(QuestionType.Open))
         {
-            ShowQuestion(out, currentQuestion);
-            out.println("<h1>Your answer:</h1>");
-            out.println("<input type=\"text\" name=\"openAnswer\" class=\"Answer\">");
-            
+            request.setAttribute("openAsk", currentQuestion);
+            link = "/AskOpenQuestion.jsp";    
         }
         else if(currentQuestion.getQuestionType().equals(QuestionType.YesNo))
         {
-            ShowQuestion(out, currentQuestion);
-            
-            out.println("<h1>Your answer:</h1>");
-            out.println("<input type=\"radio\" name=\"yesNoAnswer\" class=\"list-answers\" value=\"Yes\" checked>Yes");
-            out.println("<input type=\"radio\" name=\"yesNoAnswer\" class=\"list-answers\" value=\"No\">No");  
+           request.setAttribute("YesNoAsk", currentQuestion);
+           link = "/AskYesNoQuestion.jsp";  
         }
         else if (currentQuestion.getQuestionType().equals(QuestionType.MultiplePossible))
         {
-            ShowQuestion(out, currentQuestion);
-            out.println("   <ol>");
-            
-            Map<String, String> allAnswer = ((MultiplePossibleQuestion)currentQuestion).getAllAnswer();
-            for (int i = 1; i <= allAnswer.size(); i++) {
-                out.println("       <li>" + allAnswer.get(Integer.toString(i)) + "</li>");
-            }
-            
-            out.println("   </ol>");
-            
-            out.println("<h1>Select answers number:</h1>");
-            out.println("<input type=\"text\" name=\"answerNumber\">");
+            request.setAttribute("MultipleAsk", currentQuestion);
+            link = "/AskMultipleQuestion.jsp";
         }
-        
-        out.println("<br>");
-        out.println("<input type=\"submit\" value=\"Send\" onsubmit=\"return validateForm()\" >");
-        out.println("</form>");
-    }
 
-    private void ShowQuestion(final PrintWriter out, QuestionBase currentQuestion) {
-        out.println("<h1>The question is:</h1>");
-        out.println("<h2>"+ currentQuestion.getQuestion() +"</h2>");
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(link);
+        dispatcher.forward(request, response);
     }
 
     private void UpdateCategoryCount(HttpSession session, QuestionBase question)

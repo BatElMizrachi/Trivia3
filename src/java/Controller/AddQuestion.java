@@ -1,7 +1,6 @@
 package Controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -11,84 +10,87 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import Model.*;
-import javax.servlet.http.HttpSession;
 
 @WebServlet(urlPatterns = {"/AddQuestion"})
 public class AddQuestion extends HttpServlet {
 
     private String errorMessage;
     private QuestionBase addQuestion;
+    private String link = "";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, Exception {
         response.setContentType("text/html;charset=UTF-8");
-
-        if (request.getParameter("forSave") != null) // view to save question 
+        try
         {
-            PrintWriter out = response.getWriter();
-            String saveQuestionResult = null;
-
-            try {
-                AddQuestionByType(request, out);
-                saveQuestionResult = "/SavedQuestion.html";
-            } catch (InvalidValueException ivEx) {
-                request.setAttribute("error", errorMessage);
-                saveQuestionResult = "/ErrorSavedQuestion.jsp";
-            } catch (Exception ex) {
-                request.setAttribute("error", "The question has not been saved");
-                saveQuestionResult = "/ErrorSavedQuestion.jsp";
-            } finally {
-                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(saveQuestionResult);
-                dispatcher.forward(request, response);
-            }
-        } 
-        else if (request.getParameter("count") != null) // view - for multiple
-        {
-            HttpSession session = request.getSession();
-            MultiplePossibleQuestion multpleToAdd = new MultiplePossibleQuestion();
-            multpleToAdd.setLevel(Utils.getLevelByUserChoose((String) request.getParameter("Level")));
-            multpleToAdd.setCategory(Utils.getCategoryByUserChoose((String) request.getParameter("Category")));
-            session.setAttribute("multpleToAdd", multpleToAdd);
-            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/AddMultipleQuestion.jsp");
-            dispatcher.forward(request, response);
-        }
-        else // view - to insert question 
-        {
-
-            // להכניס את השטות לBEAN
-            Level level = Utils.getLevelByUserChoose((String) request.getParameter("Level"));
-            Category category = Utils.getCategoryByUserChoose((String) request.getParameter("Category"));
-            QuestionType questionType = Utils.getQuestionTypeByUserChoose((String) request.getParameter("QuestionType"));
-            String insertQuestion = "";
-            
-            try 
+            if (request.getParameter("forSave") != null) // view to save question 
             {
+                AddQuestionByType(request);
+                link = "/SavedQuestion.html";
+            } 
+            else if (request.getParameter("count") != null) // view - for multiple
+            {
+                addQuestion = new MultiplePossibleQuestion();
+                addQuestion.setQuestion(request.getParameter("question"));
+                SetBasicFields(request);
+                request.setAttribute("multpleToAdd", addQuestion);
+                link = "/AddMultipleQuestion.jsp";
+            }
+            else // view - to insert question 
+            {
+                QuestionType questionType = Utils.getQuestionTypeByUserChoose((String) request.getParameter("QuestionType"));
+
                 if (questionType.equals(QuestionType.Open))
                 {
-                    insertQuestion = "/InsertQuestionOpen.jsp";
+                    addQuestion = new OpenQuestion();
+                    request.setAttribute("openToAdd", addQuestion);
+                    link = "/InsertQuestionOpen.jsp";
                 } 
                 else if (questionType.equals(QuestionType.YesNo))
                 {
-                    insertQuestion = "/InsertQuestionYesNo.jsp";
+                    addQuestion = new YesNoQuestion();
+                    request.setAttribute("yesNoToAdd", addQuestion);
+                    link = "/InsertQuestionYesNo.jsp";
                 } 
                 else if (questionType.equals(QuestionType.MultiplePossible)) 
                 {
-                    insertQuestion = "/InsertQuestionMultiple.jsp";
+                    addQuestion = new MultiplePossibleQuestion();
+                    request.setAttribute("multpleToAdd", addQuestion);
+                    link = "/InsertQuestionMultiple.jsp";
                 }
-            } 
-            finally 
-            {
-                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(insertQuestion);
-                dispatcher.include(request, response);
+                
+                SetBasicFields(request);
             }
+        }
+        catch (InvalidValueException ivEx) 
+        {
+            request.setAttribute("error", errorMessage);
+            link = "/ErrorSavedQuestion.jsp";
+        } 
+        catch (Exception ex) 
+        {
+            request.setAttribute("error", "The question has not been saved");
+            link = "/ErrorSavedQuestion.jsp";
+        }
+        finally
+        {
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(link);
+            dispatcher.forward(request, response);
         }
     }
 
-    private void AddQuestionByType(HttpServletRequest request, final PrintWriter out) throws Exception {
+    private void SetBasicFields(HttpServletRequest request) {
+        addQuestion.setLevel(Utils.getLevelByUserChoose((String) request.getParameter("Level")));
+        addQuestion.setCategory(Utils.getCategoryByUserChoose((String) request.getParameter("Category")));
+    }
+
+    private void AddQuestionByType(HttpServletRequest request) throws Exception {
 
         ArrayList<QuestionBase> allQuestions = new ArrayList<QuestionBase>();
         allQuestions = FileHandler.ReadQuestions(request.getRealPath("/"));
 
+        SetBasicFields(request);
+        
         if (request.getParameter("openAnswer") != null)
         {
             OpenQuestion openQuestion = new OpenQuestion();

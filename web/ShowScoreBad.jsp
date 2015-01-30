@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Servlet StartGame</title>
+        <title></title>
         <link href="Style/appliction.css" rel="stylesheet" type="text/css"/>
         <link href="Style/Question.css" rel="stylesheet" type="text/css"/>
     </head>

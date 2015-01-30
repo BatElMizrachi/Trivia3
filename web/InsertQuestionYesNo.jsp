@@ -18,9 +18,10 @@
         </script>
     </head>
     <body>
+        <jsp:useBean id="yesNoToAdd" type="Model.YesNoQuestion" scope="request" />
         <form name="showViewQuestionToAdd" Action="AddQuestion" onsubmit="return(validateForm());">
-            <input type="hidden" name="Level" value=<%= request.getParameter("Level")%>>
-            <input type="hidden" name="Category" value= <%= request.getParameter("Category")%>>
+            <input type="hidden" name="Level" value=<jsp:getProperty name="yesNoToAdd" property="level" />>
+            <input type="hidden" name="Category" value=<jsp:getProperty name="yesNoToAdd" property="category" />>
             <h1>Insert question:</h1>
             <input type="text" name="question" width="400" height="50">
             <br>

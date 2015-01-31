@@ -21,7 +21,7 @@ public class DeleteQuestion extends HttpServlet {
  
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, FileNotFoundException {
- 
+ /*
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) 
         {
@@ -110,6 +110,7 @@ public class DeleteQuestion extends HttpServlet {
                 out.println("</html>");
             }
         }
+        */
     }
 
     protected String ShowForDelete ( ArrayList<QuestionBase> allQuestions)

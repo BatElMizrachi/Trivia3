@@ -1,5 +1,6 @@
 package Controller;
 
+import Utils.Utils;
 import DB.MultiplePossibleQuestionDB;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -92,13 +93,8 @@ public class AddQuestion extends HttpServlet {
         addQuestion.setCategory(Utils.getCategoryByUserChoose((String) request.getParameter("Category")));
     }
 
-    private void AddQuestionByType(HttpServletRequest request) throws Exception {
-
-        ArrayList<QuestionBase> allQuestions = new ArrayList<QuestionBase>();
-        allQuestions = FileHandler.ReadQuestions(request.getRealPath("/"));
-
-        SetBasicFields(request);
-        
+    private void AddQuestionByType(HttpServletRequest request) throws Exception 
+    {
         if (request.getParameter("openAnswer") != null)
         {
             OpenQuestion openQuestion = new OpenQuestion();

@@ -4,6 +4,8 @@
     Author     : Bat-El
 --%>
 
+<%@page import="java.util.Map"%>
+<%@page import="Model.MultiplePossibleQuestion"%>
 <%@page contentType="texthtml" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -40,13 +42,12 @@
             <h1> The question is: <h1>
             <h2><jsp:getProperty name="MultipleAsk" property="question" /></h2>
             <ol>
-                AllAnswer
-                <ol>
-                Map <String, String> allAnswer = ((MultiplePossibleQuestion)currentQuestion).getAllAnswer();
-                for (int i = 1; i <= allAnswer.size(); i++) {
-            <li> " + allAnswer.get(Integer.toString(i)) + " <li>
-            }
-
+                <%
+                    Map <String, String> allAnswer = MultipleAsk.getAllAnswer();
+                    for (int i = 1; i <= allAnswer.size(); i++) 
+                    { %>
+                        <li> <%= allAnswer.get(Integer.toString(i)) %><li>
+                 <% } %>
             </ol>
             <h1> Select answers number: <h1>
             <input type = "text" name = "answerNumber">

@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 import Model.*;
+import DB.*;
 
 public class Manager 
 {
@@ -31,19 +32,15 @@ public class Manager
             throws IOException, FileNotFoundException, ClassNotFoundException
     {
         // טעינת השאלות
-        ArrayList<QuestionBase> allQuestions = new ArrayList<QuestionBase>();
-        allQuestions = FileHandler.ReadQuestions(path);
-        
-        //הכנסת השאלות המתאימות לאוביקט
         questions = new ArrayList<QuestionBase>();
-        for (QuestionBase question : allQuestions)
-        {
-            if ((CategoriesLevel.containsKey(question.getCategory().toString()))
-                    && (CategoriesLevel.containsValue(question.getLevel().toString())))
-            {
-                questions.add(question);
-            }
-        }
+        
+        MultiplePossibleQuestionDB multiplePossibleQuestionDB = new MultiplePossibleQuestionDB();
+        OpenQuestionDB openQuestionDB = new OpenQuestionDB();
+        YesNoQuestionDB yesNoQuestionDB = new YesNoQuestionDB();
+        
+        questions.addAll(multiplePossibleQuestionDB.getQuestionsByCategoryAndLevel(CategoriesLevel));
+        questions.addAll(openQuestionDB.getQuestionsByCategoryAndLevel(CategoriesLevel));
+        questions.addAll(yesNoQuestionDB.getQuestionsByCategoryAndLevel(CategoriesLevel));
         
         //ערבוב נתונים
         Collections.shuffle(questions, new Random());

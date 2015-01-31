@@ -19,7 +19,7 @@ public class MultiplePossibleQuestionDB {
         try 
         {
             PreparedStatement pStatement;
-            pStatement = connection.prepareStatement("insert into multiple_Possible_Questions (QUESTION, ANSWER, CATEGORY, LEVEL)"
+            pStatement = connection.prepareStatement("insert into multiple_Possible_Question (QUESTION, ANSWER, CATEGORY, LEVEL)"
                     + " values (?, ?, ?, ? )");
             pStatement.setString(1, multiplePossibleQuestion.getQuestion());
             pStatement.setInt(2, multiplePossibleQuestion.getAnswer());
@@ -27,13 +27,23 @@ public class MultiplePossibleQuestionDB {
             pStatement.setString(4, multiplePossibleQuestion.getLevel().name());
             pStatement.executeUpdate();
             
+            pStatement = connection.prepareStatement("select CODE from multiple_Possible_Question where QUESTION=? and ANSWER=?"
+                                                        + "and CATEGORY=? and LEVEL=?");
+            pStatement.setString(1, multiplePossibleQuestion.getQuestion());
+            pStatement.setInt(2, multiplePossibleQuestion.getAnswer());
+            pStatement.setString(3, multiplePossibleQuestion.getCategory().name());
+            pStatement.setString(4, multiplePossibleQuestion.getLevel().name());
+            ResultSet rs = pStatement.executeQuery();
+            rs.next();
+            int code = rs.getInt("CODE");
+            
             Map<String,String> allAnswers =multiplePossibleQuestion.getAllAnswer();
             for (int i = 1; i <= multiplePossibleQuestion.getAllAnswer().size(); i++) 
             {
                 pStatement = connection.prepareStatement("insert into multiple_Possible_Answers (ANSWER, QUESTION_CODE, ANSWER_CODE)"
                         + " values (?, ?, ?)");
-                pStatement.setString(1, allAnswers.get(i));
-                pStatement.setInt(2, multiplePossibleQuestion.getCode());
+                pStatement.setString(1, allAnswers.get(Integer.toString(i)));
+                pStatement.setInt(2, rs.getInt("CODE"));
                 pStatement.setInt(3, i);
                 pStatement.executeUpdate();
             }
@@ -122,7 +132,7 @@ public class MultiplePossibleQuestionDB {
         {
             PreparedStatement pStatement;
 
-            pStatement = connection.prepareStatement("select * from Multiple_Possible_Question where category=? And level=");
+            pStatement = connection.prepareStatement("select * from Multiple_Possible_Question where category=? And level=?");
             Object[] keys = categoryLevel.keySet().toArray();
             
             for (int i = 0; i < categoryLevel.size(); i++) 
@@ -130,7 +140,7 @@ public class MultiplePossibleQuestionDB {
                 pStatement.setString(1, keys[i].toString());
                 pStatement.setString(2, categoryLevel.get(keys[i].toString()));
                 ResultSet rs = pStatement.executeQuery();
-                if (rs.next()) 
+                while (rs.next()) 
                 {
                     MultiplePossibleQuestion multiplePossibleQuestion = setQuestion(rs);
                     setAnswers(multiplePossibleQuestion);

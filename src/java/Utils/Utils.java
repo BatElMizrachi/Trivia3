@@ -1,5 +1,8 @@
-package Model;
+package Utils;
 
+import Model.Category;
+import Model.Level;
+import Model.QuestionType;
 import java.util.Scanner;
 
 public class Utils

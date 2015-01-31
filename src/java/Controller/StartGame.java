@@ -187,6 +187,7 @@ public class StartGame extends HttpServlet
         }
         else if (currentQuestion.getQuestionType().equals(QuestionType.MultiplePossible))
         {
+            
             request.setAttribute("MultipleAsk", currentQuestion);
             link = "/AskMultipleQuestion.jsp";
         }

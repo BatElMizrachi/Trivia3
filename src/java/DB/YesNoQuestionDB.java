@@ -89,7 +89,7 @@ public class YesNoQuestionDB {
         {
             PreparedStatement pStatement;
 
-            pStatement = connection.prepareStatement("select * from YES_NO_QUESTION where category=? And level=");
+            pStatement = connection.prepareStatement("select * from YES_NO_QUESTION where category=? And level=?");
             Object[] keys = categoryLevel.keySet().toArray();
             
             for (int i = 0; i < categoryLevel.size(); i++) 
@@ -97,7 +97,7 @@ public class YesNoQuestionDB {
                 pStatement.setString(1, keys[i].toString());
                 pStatement.setString(2, categoryLevel.get(keys[i].toString()));
                 ResultSet rs = pStatement.executeQuery();
-                if (rs.next()) 
+                while (rs.next()) 
                 {
                     YesNoQuestion yesNoQuestion = setQuestion(rs);
                     yesNoQuestions.add(yesNoQuestion);

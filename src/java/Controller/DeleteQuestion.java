@@ -1,5 +1,6 @@
 package Controller; 
 
+import DB.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,125 +13,67 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import Model.*;
+import javax.servlet.RequestDispatcher;
 
 @WebServlet(urlPatterns = {"/DeleteQuestion"})
 public class DeleteQuestion extends HttpServlet {
 
     
+    private String link = "";
+    private MultiplePossibleQuestionDB multiplePossibleQuestionDB;
+    private OpenQuestionDB openQuestionDB;
+    private YesNoQuestionDB yesNoQuestionDB;
     ArrayList<QuestionBase> allQuestions;
  
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, FileNotFoundException {
- /*
+ 
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) 
+        
+        if(request.getParameter("action") != null && request.getParameter("action").equals("delete"))
         {
-            if(request.getParameter("numberToDelete") != null)
+            try
             {
-                out.println("<!DOCTYPE html>");
-                out.println("<html>");
-                out.println("<head>");
-                out.println("<title>Show All Q</title>");   
-                out.println("<link href=\"Style/appliction.css\" rel=\"stylesheet\" type=\"text/css\"/>");
-                out.println("<link href=\"Style/Question.css\" rel=\"stylesheet\" type=\"text/css\"/>");
-                out.println("</head>");
-                out.println("<body>");
-                
-                try
+                if(request.getParameter("Type").equals(QuestionType.MultiplePossible.name()))
                 {
-                    allQuestions.remove(Integer.parseInt(request.getParameter("numberToDelete")) - 1);
-                    FileHandler.WriteQuestions(allQuestions,request.getRealPath("/"));
-                    
-                    out.println("<form name=\"Success\">");
-                    out.println("<nav class=\"headerContain\">");
-                    out.println("<h1 class=\"h1-m\">The question has been deleted</h1>");
-                    out.println("<span><img src=\"Pic/correct.png\" alt=\"\" class=\"alert_pic\"></span>");
-                    out.println("</nav>");
-                    out.println("</form>");
+                    multiplePossibleQuestionDB.DeleteQuestion(Integer.parseInt(request.getParameter("Code")));
                 }
-                catch (Exception ex)
+                else if(request.getParameter("Type").equals(QuestionType.Open.name()))
                 {
-                    out.println("<form name=\"Failure\">");
-                    out.println("<h1>The question has not been deleted</h1>");
-                    out.println("<img src=\"Pic/wrong.jpg\"/>");
-                    out.println("</form>");
+                    openQuestionDB.DeleteQuestion(Integer.parseInt(request.getParameter("Code")));
                 }
-                finally
+                else if(request.getParameter("Type").equals(QuestionType.YesNo.name()))
                 {
-                    out.println("</body>");
-                    out.println("</html>");
+                    yesNoQuestionDB.DeleteQuestion(Integer.parseInt(request.getParameter("Code")));
                 }
-                
+
+                link = "/DeleteQuestionSucceeded.html";
             }
-            else
+            catch (Exception ex)
             {
-                allQuestions = new ArrayList<QuestionBase>();
-                try 
-                {
-                    allQuestions = FileHandler.ReadQuestions(request.getRealPath("/"));
-                } 
-                catch (ClassNotFoundException ex) 
-                {
-                    Logger.getLogger(DeleteQuestion.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                
-                out.println("<!DOCTYPE html>");
-                out.println("<html>");
-                out.println("<head>");
-                out.println("<title>Show All Q</title>");        
-                out.println("<link href=\"Style/delete.css\" rel=\"stylesheet\" type=\"text/css\"/>");
-                out.println("<link href=\"Style/appliction.css\" rel=\"stylesheet\" type=\"text/css\"/>");
-                
-               
-                out.println("<script>\n" +
-                    "function validateForm() {\n" +
-                    "    var y = document.forms[\"DeleteForm\"][\"numberToDelete\"].value;\n" +
-                    "    if (y==null || y==\"\") {\n" +
-                    "        alert(\"Number of question field must be filled out\");\n" +
-                    "        return false;\n" +
-                    "    }\n" +
-                    "    if (isNaN(parseFloat(y))) {\n" +
-                    "        alert(\"Number of question field must be numeric\");\n" +
-                    "        return false;\n" +
-                    "    }\n" +
-                    "}\n" +
-                    "</script>");
-                
-                out.println("</head>");
-                out.println("<body>");
-                out.println(ShowForDelete(allQuestions));
-                
-                out.println("<form name=\"DeleteForm\">");
-                out.println("<h3>Insert number of question to delete:</h3>");
-                out.println("<input type=\"text\" name=\"numberToDelete\" class=\"count\"/>");
-                out.println("<button type=\"submit\" class=\"btn btn-default btn-delete\" value=\"Delete\" onclick=\"return validateForm();\">Delete</button>");
-                out.println("</form>");
-                
-                out.println("</body>");
-                out.println("</html>");
+                link = "/DeleteQuestionFailed.html";
             }
+
         }
-        */
+        else
+        {
+            allQuestions = new ArrayList<QuestionBase>();
+            multiplePossibleQuestionDB = new MultiplePossibleQuestionDB();
+            openQuestionDB = new OpenQuestionDB();
+            yesNoQuestionDB = new YesNoQuestionDB();
+            allQuestions.addAll(multiplePossibleQuestionDB.GetAllQuestion());
+            allQuestions.addAll(openQuestionDB.GetAllQuestion());
+            allQuestions.addAll(yesNoQuestionDB.getAllQuestion());
+
+            request.setAttribute("allQuestions", allQuestions);
+            link = "/ShowQuestionsToDelete.jsp";
+        }
+
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(link);
+        dispatcher.forward(request, response);
+        
     }
 
-    protected String ShowForDelete ( ArrayList<QuestionBase> allQuestions)
-    {
-        String listQuestion = "<div>List of question</div>";
-        listQuestion += "<ol>";
-        int index = 1;
-
-        for (QuestionBase question : allQuestions) 
-        {
-            listQuestion+= "<li>" + question.getQuestion() + "</li>";
-            index++;
-        }
-        
-        listQuestion += "</ol>";
-        if (index == 1)
-            return "<div class=\"alert alert-danger\" role=\"alert\">There are no questions</div>";
-        
-        return listQuestion;
-    }
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

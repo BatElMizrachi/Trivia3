@@ -11,8 +11,8 @@
 <html>
     <head>
         <title>Servlet StartGame</title>    
-        <link href="Styleappliction.css" rel="stylesheet" type="textcss">
-        <link href="StyleQuestion.css" rel="stylesheet" type="textcss">
+        <link href="Style/appliction.css" rel="stylesheet" type="text/css"/>
+        <link href="Style/Question.css" rel="stylesheet" type="text/css"/>
         <script>
             function validateForm()
             {
@@ -39,17 +39,17 @@
         <jsp:useBean id="MultipleAsk" type="Model.MultiplePossibleQuestion" scope="request" />
         <form name = "AskForm">
             <input type = "hidden" name = "Check" value = "Yes">
-            <h1> The question is: <h1>
+            <h1> The question is: </h1>
             <h2><jsp:getProperty name="MultipleAsk" property="question" /></h2>
             <ol>
                 <%
                     Map <String, String> allAnswer = MultipleAsk.getAllAnswer();
                     for (int i = 1; i <= allAnswer.size(); i++) 
                     { %>
-                        <li> <%= allAnswer.get(Integer.toString(i)) %><li>
+                        <li> <%= allAnswer.get(Integer.toString(i)) %></li>
                  <% } %>
             </ol>
-            <h1> Select answers number: <h1>
+            <h1> Select answers number: </h1>
             <input type = "text" name = "answerNumber">
             <br>
             <input type = "submit" value = "Send" onsubmit = "return validateForm()">

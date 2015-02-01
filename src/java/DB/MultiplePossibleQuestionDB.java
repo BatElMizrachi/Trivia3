@@ -43,7 +43,7 @@ public class MultiplePossibleQuestionDB {
                 pStatement = connection.prepareStatement("insert into multiple_Possible_Answers (ANSWER, QUESTION_CODE, ANSWER_CODE)"
                         + " values (?, ?, ?)");
                 pStatement.setString(1, allAnswers.get(Integer.toString(i)));
-                pStatement.setInt(2, rs.getInt("CODE"));
+                pStatement.setInt(2, code);
                 pStatement.setInt(3, i);
                 pStatement.executeUpdate();
             }

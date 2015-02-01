@@ -34,17 +34,17 @@ public class DeleteQuestion extends HttpServlet {
         {
             try
             {
-                if(request.getParameter("Type").equals(QuestionType.MultiplePossible.name()))
+                if(request.getParameter("type").equals(QuestionType.MultiplePossible.name()))
                 {
-                    multiplePossibleQuestionDB.DeleteQuestion(Integer.parseInt(request.getParameter("Code")));
+                    multiplePossibleQuestionDB.DeleteQuestion(Integer.parseInt(request.getParameter("code")));
                 }
-                else if(request.getParameter("Type").equals(QuestionType.Open.name()))
+                else if(request.getParameter("type").equals(QuestionType.Open.name()))
                 {
-                    openQuestionDB.DeleteQuestion(Integer.parseInt(request.getParameter("Code")));
+                    openQuestionDB.DeleteQuestion(Integer.parseInt(request.getParameter("code")));
                 }
-                else if(request.getParameter("Type").equals(QuestionType.YesNo.name()))
+                else if(request.getParameter("type").equals(QuestionType.YesNo.name()))
                 {
-                    yesNoQuestionDB.DeleteQuestion(Integer.parseInt(request.getParameter("Code")));
+                    yesNoQuestionDB.DeleteQuestion(Integer.parseInt(request.getParameter("code")));
                 }
 
                 link = "/DeleteQuestionSucceeded.html";
